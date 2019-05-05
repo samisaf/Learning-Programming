@@ -1,0 +1,123 @@
+/*
+ * QuadricEqPlot.java
+ *
+ * Created on April 24, 2007, 5:14 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+package equationprogram;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import javax.swing.*;
+
+/**
+ * The class provides a convenient way to plot the function that corresponds to the equation object.
+ * @author Sami Safadi
+ */
+public class QuadricEqPlot extends JComponent{
+    // Defining the class fiels
+    private int No_Of_Points = 500; //number of points used to draw the plot
+    private Point2D.Double p[] = new Point2D.Double[No_Of_Points+1];
+    private double x1, x2; //interval on the x axis
+    private double y1, y2; //interval on the y axis
+    private QuadricEq function; //the function being drawn
+    
+    /**
+     * Creates a new instance(constructor) of QuadricEqPlot.
+     * @param function The function that the plot will represent.
+     * @param x1 The start of the plot on the X axis.
+     * @param x2 The end of the plot on the X axis.
+     * @param y1 The start of the plot on the Y axis.
+     * @param y2 The end of the plot on the Y axis.
+     */
+    public QuadricEqPlot(QuadricEq function,double x1,double x2,double y1,double y2) {
+        super();
+        this.setSize(No_Of_Points,No_Of_Points);
+        this.x1 = x1; 
+        this.x2 = x2; 
+        this.y1 = y1;
+        this.y2 = y2;
+        this.function = function;
+        setPoints();
+    }
+    
+    // Creates class methodes
+    /**
+     * This methods assigns the points corresonding to the function in the plot.
+     */
+    public void setPoints(){    //This methodes put the points in space
+        int i=0;
+        double spacing = (Math.abs(x2-x1) / No_Of_Points);
+        double x,y;
+        for(i=0;i<=No_Of_Points; i++){
+            x = x1 + i*spacing;
+            y = function.getYfromX(x);
+            p[i] = new Point2D.Double(x,y);
+        }
+    }
+    
+    /**
+     * This methods draws the plot on a specific container.
+     * @param g a graphics object.
+     */
+    public void paintComponent(Graphics g) {    //This methodes draw the equation on the plot
+        Graphics2D g2 = (Graphics2D) g;
+
+        //fill the graphic with a white area
+        g2.setColor(Color.WHITE);
+        g2.fillRect(0,0,this.getWidth(),this.getHeight());
+        
+        //set stroke & antialiasing properties
+        BasicStroke bs = new BasicStroke(1);
+        g2.setStroke(bs);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        //set the axis transformation
+        double ScaleX = 1*(this.getWidth() / (x2-x1));
+        double ScaleY = 1*(this.getHeight() / (y2-y1));
+        
+        //draw the X & Y axis
+        g2.setColor(Color.BLACK);
+        Line2D.Double axis = new Line2D.Double();
+        
+        axis.setLine(0, y2*ScaleY, (x2-x1)*ScaleX, y2*ScaleY);
+        g2.draw(axis);
+        axis.setLine(-x1*ScaleX, 0, -x1*ScaleX, (y2-y1)*ScaleY);
+        g2.draw(axis);
+        
+        //draw the plot by joining the points p[] by lines
+        g2.setColor(Color.RED);
+        Line2D.Double l = new Line2D.Double();
+        int i=0;
+        for(i=0;i<No_Of_Points;i++){
+            l.setLine((p[i].getX()-x1)*ScaleX,(y2-p[i].getY())*ScaleY,
+                    (p[i+1].getX()-x1)*ScaleX,(y2-p[i+1].getY())*ScaleY);
+            g2.draw(l);
+        }
+            
+        //finally I need to tell the user about the interval of the current plot
+        g2.setColor(Color.BLUE);
+        String info = "Equation " + function.toString() + "with the roots x1 = " + 
+                function.getRoot1() + " & x2 = " + function.getRoot2();
+        g2.drawString("Plotting from " + x1 + " to " + x2 + " on the X axis",10,20);
+        g2.drawString("Plotting from " + y1 + " to " + y2 + " on the Y axis",10,40);
+        //g2.drawString(info,10,20);
+    }
+    
+    /**
+     * A testdrive method.
+     * @param args Commandline arguments.
+     */
+    public static void main(String[] args){ //Testdrive method
+        QuadricEq e1 = new QuadricEq(-1,5,7);
+        QuadricEqPlot p1 = new QuadricEqPlot(e1,-10,10,-20,20);
+        JFrame f = new JFrame();
+        f.setSize(400,400);
+        f.add(p1);
+        f.setVisible(true);
+    }
+}

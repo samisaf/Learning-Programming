@@ -1,0 +1,3 @@
+(define (acidemia? pH) (< pH 7.35))
+(define (alkalemia? pH) (> pH 7.45))
+(define (neutral? pH) (not (or (acidemia? pH) (alkalemia? pH))))

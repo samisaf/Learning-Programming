@@ -1,0 +1,18 @@
+(define (sq num guess)
+  (if (good-enough? num guess)
+      guess
+      (sq num (improve num guess))))
+
+(define (good-enough? num guess)
+  (< (abs (- num (* guess guess))) 0.00001))
+
+(define (improve num guess)
+  (average guess (/ num guess)))
+
+(define (average x y)
+  (/ (+ x y ) 2))
+
+(define (squaro x)
+  (sq x 1.0))
+
+  

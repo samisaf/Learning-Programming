@@ -1,0 +1,16 @@
+(define (square x) (* x x))
+
+(define (sqroot x) (sqrt-iter x 1))
+
+(define (sqrt-iter x guess)
+  (cond ((good-enough? x guess) guess)
+        else (sqrt-iter x (improve guess x))))
+
+(define (good-enough? x guess)
+  (> (abs(- x (square guess))) 0.001))
+
+(define (imporve guess x)
+  (average x (/ x guess)))
+
+(define (average x y) (/ (+ x y) 2))
+
