@@ -11,8 +11,7 @@ find . -type f -name "*.tex" | while read -r input; do
     echo "Converting: $input"
     echo "To: $output"
     
-    pandoc "$input" -t markdown -o "$output" 
-    # --from=latex+raw_tex
+    pandoc "$input" -t markdown -o "$output" --from=latex+raw_tex
     
     if [ $? -eq 0 ]; then
         echo "Success: $output"

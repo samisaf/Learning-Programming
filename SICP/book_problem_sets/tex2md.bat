@@ -12,8 +12,7 @@ for /r %%f in (*.tex) do (
     echo Converting: %%f
     echo To: !output!
     
-    pandoc "!input!" -t markdown -o "!output!" 
-    @REM --from=latex+raw_tex
+    pandoc "!input!" -t markdown -o "!output!"  --from=latex+raw_tex
     
     if !errorlevel! equ 0 (
         echo Success: !output!
